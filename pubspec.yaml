@@ -29,18 +29,20 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  bloc: ^8.1.0
-  cupertino_icons: ^1.0.2
-  equatable: ^2.0.5
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
+  bloc: ^8.1.0
+  equatable: ^2.0.5
   flutter_bloc: ^8.1.1
   flutter_map: ^3.0.0
   geolocator: ^9.0.2
-  mapbox_gl: ^0.15.0
   location: ^4.2.0
   permission_handler: ^10.2.0
   latlong2: ^0.8.1
+  google_fonts: ^4.0.3
+  get_storage: ^2.1.1
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_lints: ^2.0.0
