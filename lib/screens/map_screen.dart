@@ -46,7 +46,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     _liveUpdate = true;
     _mapController = MapController();
     initLocationService();
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
       context.read<AuthenticationBloc>().add(SendUbicacionEvent(
             latitud: '${_currentLocation!.latitude}',
             longitud: '${_currentLocation!.longitude}',
