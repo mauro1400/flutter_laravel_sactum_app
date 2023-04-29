@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'package:ruta_bus/blocks/auth/authentication_bloc.dart';
+import 'package:ruta_bus/main.dart';
 
 // ignore: constant_identifier_names
 const MAPBOX_DOWNLOADS_TOKEN =
@@ -126,7 +129,6 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     var size = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
         title: Text(
           'Ubicacion Actual',
           style: GoogleFonts.poppins(
@@ -134,6 +136,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
             color: Colors.white,
           ),
         ),
+        backgroundColor: Colors.black,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
@@ -175,32 +178,50 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
           ],
         ),
       ),
-      floatingActionButton: Builder(builder: (BuildContext context) {
-        return FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _liveUpdate = !_liveUpdate;
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag:"cerrarSecsion",
+            onPressed: () {
+              context.read<AuthenticationBloc>().add(const LogoutEvent());
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MyApp()),
+              );
+            },
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            child: const Icon(Icons.logout),
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            heroTag:"Ubicacion",
+            onPressed: () {
+              setState(() {
+                _liveUpdate = !_liveUpdate;
 
-              if (_liveUpdate) {
-                interActiveFlags = InteractiveFlag.rotate |
-                    InteractiveFlag.pinchZoom |
-                    InteractiveFlag.doubleTapZoom;
+                if (_liveUpdate) {
+                  interActiveFlags = InteractiveFlag.rotate |
+                      InteractiveFlag.pinchZoom |
+                      InteractiveFlag.doubleTapZoom;
 
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Ubicacion...'),
-                ));
-              } else {
-                interActiveFlags = InteractiveFlag.all;
-              }
-            });
-          },
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black, // Añade esta propiedad para cambiar el color del icono
-          child: _liveUpdate
-              ? const Icon(Icons.location_on)
-              : const Icon(Icons.location_off),
-        );
-      }),
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Ubicacion...'),
+                  ));
+                } else {
+                  interActiveFlags = InteractiveFlag.all;
+                }
+              });
+            },
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            child: _liveUpdate
+                ? const Icon(Icons.location_on)
+                : const Icon(Icons.location_off),
+          ),
+        ],
+      ),
     );
   }
 }
