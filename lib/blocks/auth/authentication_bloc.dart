@@ -30,20 +30,20 @@ class AuthenticationBloc
         );
         if (response.statusCode == 200) {
           var token = json.decode(response.body)['token'];
+          var idPersona = json.decode(response.body)['user']['id_persona'];
+          box.write('id_persona', idPersona);
           box.write('token', token);
           emit(AuthenticationSuccess(token));
-          print(token);
         } else {
-          AuthenticationFailure(json.decode(response.body)['message']);
+          AuthenticationFailure(json.decode(response.body)['errorMessage']);
         }
       } catch (e) {
         debugPrint(e.toString());
-        const AuthenticationFailure('Something went wrong. Please try again.');
+        const AuthenticationFailure('Algo salió mal. Inténtalo de nuevo.');
       }
     });
     on<LogoutEvent>((event, emit) async {
       var token = box.read('token');
-      print(token);
       var response = await http.post(
         Uri.parse('${url}logout'),
         headers: {
@@ -53,9 +53,38 @@ class AuthenticationBloc
       if (response.statusCode == 200) {
         box.remove('token');
         emit(AuthenticationInitial());
-        print(token);
       } else {
-        emit(AuthenticationFailure(json.decode(response.body)['message']));
+        emit(AuthenticationFailure(json.decode(response.body)['errorMessage']));
+      }
+    });
+    on<SendUbicacionEvent>((event, emit) async {
+      var token = box.read('token');
+      var idPersona = box.read('id_persona');
+      var data = {
+        'latitud': event.latitud,
+        'longitud': event.longitud,
+        'id_persona': idPersona,
+      }; 
+
+      debugPrint(token);
+      print(data);
+      try {
+        var response = await http.post(
+          Uri.parse('${url}ubicacion'),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode(data),
+        );
+        if (response.statusCode == 200) {
+          emit(AuthenticationSuccess(token));
+        } else {
+          emit(UbicacionFailure(json.decode(response.body)['errorMessage']));
+        }
+      } catch (e) {
+        debugPrint(e.toString());
+        emit(const UbicacionFailure('Algo salió mal. Inténtalo de nuevo.'));
       }
     });
   }

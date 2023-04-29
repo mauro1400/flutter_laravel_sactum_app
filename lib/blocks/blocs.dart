@@ -1,1 +1,1 @@
-export 'package:ruta_bus/blocks/bloc/gps/gps_bloc.dart';
+export 'package:ruta_bus/blocks/gps/gps_bloc.dart';

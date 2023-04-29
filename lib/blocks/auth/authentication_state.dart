@@ -30,3 +30,15 @@ class AuthenticationFailure extends AuthenticationState {
 
   void get error => 'error';
 }
+
+class UbicacionFailure extends AuthenticationState {
+  final String errorMessage;
+
+  const UbicacionFailure(this.errorMessage);
+
+  @override
+  List<Object> get props => [errorMessage];
+
+  void get error => 'error';
+}
+class UbicacionSuccess extends AuthenticationState {}

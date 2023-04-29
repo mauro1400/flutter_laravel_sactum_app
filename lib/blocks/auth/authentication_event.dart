@@ -23,3 +23,13 @@ class LogoutEvent extends AuthenticationEvent {
   @override
   List<Object> get props => [];
 }
+
+class SendUbicacionEvent extends AuthenticationEvent {
+  final String latitud;
+  final String longitud;
+
+  const SendUbicacionEvent({required this.latitud, required this.longitud});
+
+  @override
+  List<Object> get props => [latitud, longitud];
+}

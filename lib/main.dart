@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ruta_bus/blocks/auth/authentication_bloc.dart';
 import 'package:ruta_bus/screens/loading_screens.dart';
-import 'package:ruta_bus/screens/screens.dart';
-import 'package:ruta_bus/blocks/bloc/gps/gps_bloc.dart';
+import 'package:ruta_bus/blocks/gps/gps_bloc.dart';
 
 void main() {
   runApp(MultiBlocProvider(

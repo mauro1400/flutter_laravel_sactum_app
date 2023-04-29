@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,18 +38,31 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
 
   final Location _locationService = Location();
 
+  late final Timer _timer;
+
   @override
   void initState() {
     super.initState();
     _liveUpdate = true;
     _mapController = MapController();
     initLocationService();
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      context.read<AuthenticationBloc>().add(SendUbicacionEvent(
+            latitud: '${_currentLocation!.latitude}',
+            longitud: '${_currentLocation!.longitude}',
+          ));
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void initLocationService() async {
     await _locationService.changeSettings(
       accuracy: LocationAccuracy.high,
-      interval: 1000,
     );
 
     LocationData? location;
@@ -103,8 +118,6 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   Widget build(BuildContext context) {
     LatLng currentLatLng;
 
-    // Until currentLocation is initially updated, Widget can locate to 0, 0
-    // by default or store previous location value to show.
     if (_currentLocation != null) {
       currentLatLng =
           LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!);
@@ -127,6 +140,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     ];
 
     var size = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -144,12 +158,16 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: _serviceError!.isEmpty
-                  ? Text('Ubicacion actual:  '
-                      '(${currentLatLng.latitude}, ${currentLatLng.longitude}).')
-                  : Text(
-                      'Ocurrió un error al adquirir la ubicación. Mensaje de error : '
-                      '$_serviceError'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _serviceError!.isEmpty
+                      ? Text(
+                          'Ubicacion actual: (${currentLatLng.latitude}, ${currentLatLng.longitude}).')
+                      : Text(
+                          'Ocurrió un error al adquirir la ubicación. Mensaje de error: $_serviceError'),
+                ],
+              ),
             ),
             Flexible(
               child: FlutterMap(
@@ -182,7 +200,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            heroTag:"cerrarSecsion",
+            heroTag: "cerrarSesion",
             onPressed: () {
               context.read<AuthenticationBloc>().add(const LogoutEvent());
               Navigator.pushReplacement(
@@ -196,7 +214,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
           ),
           const SizedBox(width: 16),
           FloatingActionButton(
-            heroTag:"Ubicacion",
+            heroTag: "posicion",
             onPressed: () {
               setState(() {
                 _liveUpdate = !_liveUpdate;

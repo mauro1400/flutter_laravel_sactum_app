@@ -1,8 +1,9 @@
 import 'package:ruta_bus/blocks/auth/authentication_bloc.dart';
-import 'package:ruta_bus/screens/widget/input_widget.dart';
+import 'package:ruta_bus/screens/widget/input_widget_e.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ruta_bus/screens/widget/input_widget_p.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final bool _passwordObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 30,
               ),
-              InputWidget(
+              InputWidgetEmail(
                 hintText: 'Email',
                 obscureText: false,
                 controller: _emailController,
@@ -46,9 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 20,
               ),
-              InputWidget(
+              InputWidgetPassword(
                 hintText: 'Password',
-                obscureText: true,
+                obscureText: _passwordObscure,
                 controller: _passwordController,
               ),
               const SizedBox(
@@ -89,8 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : Text(
                             'Iniciar Sesion',
-                            style:
-                                GoogleFonts.poppins(fontSize: size * 0.040),
+                            style: GoogleFonts.poppins(fontSize: size * 0.040),
                           ),
                   );
                 },

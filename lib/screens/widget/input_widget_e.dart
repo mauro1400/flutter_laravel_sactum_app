@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class InputWidget extends StatelessWidget {
-  const InputWidget({
-    Key? key,
-    required this.hintText,
-    required this.controller,
-    required this.obscureText,
-  }) : super(key: key);
+class InputWidgetEmail extends StatefulWidget {
+  const InputWidgetEmail(
+      {Key? key,
+      required this.hintText,
+      required this.controller,
+      required this.obscureText})
+      : super(key: key);
 
   final String hintText;
   final TextEditingController controller;
   final bool obscureText;
 
   @override
+  State<InputWidgetEmail> createState() => _InputWidgetEmailState();
+}
+
+class _InputWidgetEmailState extends State<InputWidgetEmail> {
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 255, 255, 255),
+        color: const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(10),
       ),
       child: TextField(
-        obscureText: obscureText,
-        controller: controller,
+        controller: widget.controller,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle: GoogleFonts.poppins(),
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          suffixIcon: const Icon(Icons.person),
         ),
       ),
     );
