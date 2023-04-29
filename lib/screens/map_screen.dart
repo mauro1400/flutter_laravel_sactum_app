@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
@@ -9,8 +10,6 @@ const MAPBOX_DOWNLOADS_TOKEN =
     'sk.eyJ1IjoiaGFtZXItMSIsImEiOiJjbGR2MnUzMmwwYndlNDBtcHgzM2w2ZHRnIn0.piOLEAUk86Kpm_7a4YAoAg';
 
 class LiveLocationPage extends StatefulWidget {
-  static const String route = '/live_location';
-
   const LiveLocationPage({Key? key}) : super(key: key);
 
   @override
@@ -25,7 +24,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   final satelite = '/hamer-1/cldvc6hyn007a01o3dp4i26fh';
   final claro = 'hamer-1/cldvbrb05000401lbc4pddtpo';
 
-  bool _liveUpdate = false;
+  bool _liveUpdate = true;
   bool _permission = false;
 
   String? _serviceError = '';
@@ -37,6 +36,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   @override
   void initState() {
     super.initState();
+    _liveUpdate = true;
     _mapController = MapController();
     initLocationService();
   }
@@ -123,8 +123,18 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       ),
     ];
 
+    var size = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text('Ubicacion Actual')),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text(
+          'Ubicacion Actual',
+          style: GoogleFonts.poppins(
+            fontSize: size * 0.050,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -184,6 +194,8 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
               }
             });
           },
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black, // Añade esta propiedad para cambiar el color del icono
           child: _liveUpdate
               ? const Icon(Icons.location_on)
               : const Icon(Icons.location_off),

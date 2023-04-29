@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           )
                         : Text(
-                            'Login',
+                            'Iniciar Sesion',
                             style:
                                 GoogleFonts.poppins(fontSize: size * 0.040),
                           ),
