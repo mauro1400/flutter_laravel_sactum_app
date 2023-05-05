@@ -13,9 +13,9 @@ class LoadingScreen extends StatelessWidget {
       body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state is AuthenticationSuccess) {
-            return const LoadingMap();// Si el estado es AuthenticationSuccess, navegar a la HomePage.
+            return const LoadingMap(); // Si el estado es AuthenticationSuccess, navegar a la HomePage.
           } else {
-            return const LoginScreen();// Si el estado no es AuthenticationSuccess, mostrar la pantalla de inicio de sesión.
+            return const LoginScreen(); // Si el estado no es AuthenticationSuccess, mostrar la pantalla de inicio de sesión.
           }
         },
       ),

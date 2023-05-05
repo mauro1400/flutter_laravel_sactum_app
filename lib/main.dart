@@ -5,13 +5,15 @@ import 'package:ruta_bus/screens/loading_screens.dart';
 import 'package:ruta_bus/blocks/gps/gps_bloc.dart';
 
 void main() {
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (context) => GpsBloc()),
-      BlocProvider(create: (context) => AuthenticationBloc())
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => GpsBloc()),
+        BlocProvider(create: (context) => AuthenticationBloc())
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -20,8 +22,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'MapsAPP',
-        home: LoadingScreen());
+      debugShowCheckedModeBanner: false,
+      home: LoadingScreen(),
+    );
   }
 }

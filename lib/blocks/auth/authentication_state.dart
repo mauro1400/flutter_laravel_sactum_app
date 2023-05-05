@@ -4,7 +4,6 @@ abstract class AuthenticationState extends Equatable {
   const AuthenticationState();
   @override
   List<Object> get props => [];
-
 }
 
 class AuthenticationInitial extends AuthenticationState {}
@@ -41,4 +40,5 @@ class UbicacionFailure extends AuthenticationState {
 
   void get error => 'error';
 }
+
 class UbicacionSuccess extends AuthenticationState {}

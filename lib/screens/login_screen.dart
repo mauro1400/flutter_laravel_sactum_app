@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'ACCESO',
+                'ACCESO TRANSPORTE',
                 style: GoogleFonts.poppins(fontSize: size * 0.080),
               ),
               Text(

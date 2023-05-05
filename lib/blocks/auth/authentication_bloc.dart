@@ -64,7 +64,7 @@ class AuthenticationBloc
         'latitud': event.latitud,
         'longitud': event.longitud,
         'id_persona': idPersona,
-      }; 
+      };
 
       debugPrint(token);
       print(data);
