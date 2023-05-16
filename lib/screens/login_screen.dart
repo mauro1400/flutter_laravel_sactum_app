@@ -1,9 +1,9 @@
-import 'package:ruta_bus/blocks/auth/authentication_bloc.dart';
-import 'package:ruta_bus/screens/widget/input_widget_e.dart';
+import 'package:ruta_bus/bloc/auth/authentication_bloc.dart';
+import 'package:ruta_bus/widget/input_widget_e.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ruta_bus/screens/widget/input_widget_p.dart';
+import 'package:ruta_bus/widget/input_widget_p.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

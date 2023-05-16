@@ -1,6 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ruta_bus/blocks/blocs.dart';
+import 'package:ruta_bus/bloc/blocs.dart';
 import 'package:ruta_bus/screens/screens.dart';
 
 class LoadingMap extends StatelessWidget {

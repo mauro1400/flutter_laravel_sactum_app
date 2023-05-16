@@ -1,14 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:ruta_bus/blocks/auth/authentication_bloc.dart';
+import 'package:ruta_bus/bloc/auth/authentication_bloc.dart';
+import 'package:ruta_bus/bloc/lista/lista_bloc.dart';
 import 'package:ruta_bus/main.dart';
+import 'package:ruta_bus/services/ubicacion_servicio.dart';
+import 'package:ruta_bus/utils/constants.dart';
+import 'package:ruta_bus/widget/lista_widget.dart';
+import 'package:ruta_bus/widget/location_toggle_button.dart';
+import 'package:ruta_bus/widget/logout_button_widget.dart';
+import 'package:ruta_bus/widget/markers_widget.dart';
 
 // ignore: constant_identifier_names
 const MAPBOX_DOWNLOADS_TOKEN =
@@ -30,27 +36,39 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   final claro = 'hamer-1/cldvbrb05000401lbc4pddtpo';
 
   bool _liveUpdate = true;
-  bool _permission = false;
 
-  String? _serviceError = '';
+  final String _serviceError = '';
 
   int interActiveFlags = InteractiveFlag.all;
 
-  final Location _locationService = Location();
-
+  // obtener referencia al Bloc
+  late final ListaBloc listaBloc = ListaBloc(context);
   late final Timer _timer;
 
   @override
   void initState() {
     super.initState();
+    listaBloc.add(const ListaEstudiantesEvent());
     _liveUpdate = true;
     _mapController = MapController();
-    initLocationService();
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(Duration(seconds: tiempo), (timer) {
       context.read<AuthenticationBloc>().add(SendUbicacionEvent(
-            latitud: '${_currentLocation!.latitude}',
-            longitud: '${_currentLocation!.longitude}',
+            latitud: '${_currentLocation?.latitude ?? ''}',
+            longitud: '${_currentLocation?.longitude ?? ''}',
           ));
+    });
+
+    LocationService.initLocationService((LocationData? location) {
+      if (mounted) {
+        setState(() {
+          _currentLocation = location;
+          // If Live Update is enabled, move map center
+          if (_liveUpdate && location != null) {
+            _mapController.move(LatLng(location.latitude!, location.longitude!),
+                _mapController.zoom);
+          }
+        });
+      }
     });
   }
 
@@ -60,58 +78,10 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     super.dispose();
   }
 
-  void initLocationService() async {
-    await _locationService.changeSettings(
-      accuracy: LocationAccuracy.high,
-    );
+  List<bool> estadosChecklist = [];
 
-    LocationData? location;
-    bool serviceEnabled;
-    bool serviceRequestResult;
-
-    try {
-      serviceEnabled = await _locationService.serviceEnabled();
-
-      if (serviceEnabled) {
-        final permission = await _locationService.requestPermission();
-        _permission = permission == PermissionStatus.granted;
-
-        if (_permission) {
-          location = await _locationService.getLocation();
-          _currentLocation = location;
-          _locationService.onLocationChanged
-              .listen((LocationData result) async {
-            if (mounted) {
-              setState(() {
-                _currentLocation = result;
-
-                // If Live Update is enabled, move map center
-                if (_liveUpdate) {
-                  _mapController.move(
-                      LatLng(_currentLocation!.latitude!,
-                          _currentLocation!.longitude!),
-                      _mapController.zoom);
-                }
-              });
-            }
-          });
-        }
-      } else {
-        serviceRequestResult = await _locationService.requestService();
-        if (serviceRequestResult) {
-          initLocationService();
-          return;
-        }
-      }
-    } on PlatformException catch (e) {
-      debugPrint(e.toString());
-      if (e.code == 'PERMISSION_DENIED') {
-        _serviceError = e.message;
-      } else if (e.code == 'SERVICE_STATUS_ERROR') {
-        _serviceError = e.message;
-      }
-      location = null;
-    }
+  void _mostrarListaEstudiantes(BuildContext context) {
+    ListaEstudiantesDialog.show(context);
   }
 
   @override
@@ -125,19 +95,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       currentLatLng = LatLng(0, 0);
     }
 
-    final markers = <Marker>[
-      Marker(
-        width: 80,
-        height: 80,
-        point: currentLatLng,
-        builder: (ctx) => CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.blue.withOpacity(0.3),
-          child: const Icon(Icons.directions_car,
-              color: Color.fromARGB(255, 0, 0, 0)),
-        ),
-      ),
-    ];
+    final markers = getMarkers(currentLatLng);
 
     var size = MediaQuery.of(context).size.width;
 
@@ -161,7 +119,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _serviceError!.isEmpty
+                  _serviceError.isEmpty
                       ? Text(
                           'Ubicacion actual: (${currentLatLng.latitude}, ${currentLatLng.longitude}).')
                       : Text(
@@ -199,8 +157,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton(
-            heroTag: "cerrarSesion",
+          LogoutButton(
             onPressed: () {
               context.read<AuthenticationBloc>().add(const LogoutEvent());
               Navigator.pushReplacement(
@@ -208,13 +165,9 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                 MaterialPageRoute(builder: (context) => const MyApp()),
               );
             },
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            child: const Icon(Icons.logout),
           ),
           const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: "posicion",
+          LocationToggleButton(
             onPressed: () {
               setState(() {
                 _liveUpdate = !_liveUpdate;
@@ -232,11 +185,17 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                 }
               });
             },
+            liveUpdate: _liveUpdate,
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            heroTag: "lista",
+            onPressed: () {
+              _mostrarListaEstudiantes(context);
+            },
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
-            child: _liveUpdate
-                ? const Icon(Icons.location_on)
-                : const Icon(Icons.location_off),
+            child: const Icon(Icons.edit),
           ),
         ],
       ),

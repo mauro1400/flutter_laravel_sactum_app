@@ -19,7 +19,6 @@ class LoginEvent extends AuthenticationEvent {
 
 class LogoutEvent extends AuthenticationEvent {
   const LogoutEvent();
-  get message => null;
   @override
   List<Object> get props => [];
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ruta_bus/blocks/gps/gps_bloc.dart';
-import 'package:ruta_bus/blocks/blocs.dart';
+import 'package:ruta_bus/bloc/gps/gps_bloc.dart';
+import 'package:ruta_bus/bloc/blocs.dart';
 
 class GpsAccesScreen extends StatelessWidget {
   const GpsAccesScreen({Key? key}) : super(key: key);
