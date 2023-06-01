@@ -35,6 +35,7 @@ class AuthenticationBloc
           var token = json.decode(response.body)['token'];
           var idPersona = json.decode(response.body)['user']['id_persona'];
           box.write('token', token);
+          box.write('id_persona', idPersona);
           var id = {
             'id_persona': idPersona.toString(),
           };
@@ -94,6 +95,7 @@ class AuthenticationBloc
     on<SendUbicacionEvent>((event, emit) async {
       var token = box.read('token');
       var idPersona = box.read('id_persona');
+      print(idPersona);
       var data = {
         'latitud': event.latitud,
         'longitud': event.longitud,
@@ -110,7 +112,9 @@ class AuthenticationBloc
           body: json.encode(data),
         );
         if (response.statusCode == 200) {
+          var data = json.decode(response.body);
           debugPrint('ubicacion enviada');
+          print(data);
         } else {
           emit(UbicacionFailure(json.decode(response.body)['errorMessage']));
         }
